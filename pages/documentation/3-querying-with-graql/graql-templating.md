@@ -45,6 +45,22 @@ first is a <string>, second a <long>, third a <double>, fourth a <boolean>
 first is a "string", second a 40, third a 0.001, fourth a false
 ```
 
+### Unsupported symbols
+
+The templating language requires that non-alphanumeric (plus `-`) symbols in any data key be quoted. 
+
+```graql-template
+insert $x has description <"ple@s3D0ntD0Th!sT0Y0urself">;
+```
+
+If you need to nest keys with invalid symbols you need to quote each individual key:
+
+```graql-template
+insert $x has description <"ple@s3".D0nt.D0."Th!s".T0.Y0urself>;
+```
+
+For a list of the reserved keywords, see the bottom of this page. 
+
 ## Logic 
 
 ### Expressions
@@ -193,14 +209,10 @@ insert $x isa thing val @equals(<this>, <that>, <other>)
 if (@equals(<this>, <that>)) do { equals }"
 ```
 
-**`date`** `(<value>, fromFormat, toFormat)` converts a date string from the given format to another format. If the third argument is missing, converts to epoch time. Date format specifications can be found [here](https://docs.oracle.com/javase/8/docs/api/java/text/SimpleDateFormat.html). Returns a string. 
+**`date`** `(<value>, fromFormat)` converts a date string from the given format to the supported Graql date format. Date format specifications can be found [here](https://docs.oracle.com/javase/8/docs/api/java/text/SimpleDateFormat.html). Returns a string. 
 
 ```graql-template
-insert $x val @date(<date>, "mm/dd/yyyy", "dd/mm/yyyy");
-```
-
-```graql-template
-insert $x val @date(<date>, "mm/dd/yyyy");
+insert $x val @date(<date>, "mm/dd/yyyy"d);
 ```
 
 **`lower`** converts the contents of the data to lower case. 
@@ -232,12 +244,12 @@ insert $x has val @concat(<forname>, " ", <surname>);
 
 #### Nesting macros
 
-When writing a template, you can nest macros inside other macros. When doing so, you're usnig the results of the nested macros as arguments to the enclosing ones. 
+When writing a template, you can nest macros inside other macros. When doing so, you're using the results of the nested macros as arguments to the enclosing ones. 
 
-For example, the `date` macro returns a string, but many people will want to convert to epoch time and store the value as a long. If that is the case you can:
+For example, the `split` macro returns strings, but people may want to convert one of the values as a long. If that is the case you can:
 
 ```graql-template
-insert $x val @long(@date(<date> "mm/dd/yyyy"));
+insert $x val @long(@split(<list>, ",")[0]);
 ```
 
 #### User-defined Macros
@@ -288,9 +300,41 @@ would result in the expanded Graql queries:
 ```graql
 ...
 insert $p0 isa person has firstname "Barbara" has identifier "Barbara Newman" has surname "Newman" has gender "female";
-insert $p0 has birth-date 1811-03-06 isa person has surname "Newman" has gender "male" has death-date 1898-09-10 has identifier "Henry Newman" has age 87 has firstname "Henry";
+insert $p1 has birth-date 1811-03-06 isa person has surname "Newman" has gender "male" has death-date 1898-09-10 has identifier "Henry Newman" has age 87 has firstname "Henry";
 ... 
 ```
+
+### Reserved Keywords
+
+The following is a list of the reserved keywords in the Graql templating language. 
+
+* `,`
+* `;`
+* `(`
+* `)`
+* `[`
+* `]`
+* `:`
+* `for`
+* `if`
+* `elseif`
+* `else`
+* `do`
+* `in`
+* `true`
+* `false`
+* `and`
+* `or`
+* `not`
+* `null`
+* `=`
+* `!=`
+* `>`
+* `>=`
+* `@`
+* `<`
+* `<=`
+*`"`
 
 
 ## Comments
