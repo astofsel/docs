@@ -72,7 +72,7 @@ Expressions can be used as the conditions in `if`/`elseif` statements or as the 
 Boolean expressions operate over `true` and `false`.
 
 |  Expression | Usage | 
-|-------------|---| --- |
+|-------------|---| 
 | `and`       |  `if (<this> and <that>) do { ... }` |
 | `or`        |  `if (<this> or <that>) do { ... }` |
 | `not`       |  `if (not <this>) do { ... }` | 
@@ -163,6 +163,21 @@ $x isa person has name <name>;
         ($x, $y) isa resides;
     }
 }
+```
+
+### Array Accessors
+
+Graql templates allow you to access an element at a specific index in a given list. This is denoted by the square brackets surrounding the desired index `[0]`. 
+
+**Accessing the first element** of an array.
+```graql-template
+insert $x has name <names[0]>;
+```
+
+**Two dimentional arrays** where data is stored in arrays of arrays.
+```graql-template
+// to get the first dish in the first course of the meal 
+insert $x isa first-course has dish <course[0][1]>;
 ```
 
 ### Macros
